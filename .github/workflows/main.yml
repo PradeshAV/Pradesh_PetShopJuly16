@@ -1,0 +1,28 @@
+name: Run JMeter Test using PerfAction
+
+on: [push]
+
+jobs:
+  run-jmeter:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15  # ✅ Avoid indefinite hangs
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: List Directory for Debugging  # ✅ Optional but useful
+        run: ls -R
+
+      - name: PerfAction for JMeter
+        uses: QAInsights/PerfAction@v5.6.3
+        with:
+          test-plan-path: './PetStore_July16.jmx'
+          results-file: 'results.jtl'
+          args: '-Jthreads=10 -Jduration=60'
+
+      - name: Upload JMeter Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: jmeter-results
+          path: results.jtl
